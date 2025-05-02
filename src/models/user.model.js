@@ -11,6 +11,12 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
       index: true,
+      minlength: [3, "username must be at least 3 characters long"],
+      maxlength: [10, "username must be at most 20 characters long"],
+      match: [
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores",
+      ],
     },
     email: {
       type: String,
@@ -19,13 +25,13 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    fullname: {
+    fullName: {
       type: String,
       required: true,
       trim: true,
       index: true,
     },
-    avatar: {
+    avator: {
       type: String, // cloudinary url
       required: true,
     },
@@ -41,6 +47,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters long"],
     },
     refreshToken: {
       type: String,

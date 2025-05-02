@@ -7,7 +7,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from frontend
   const { fullName, email, username, password } = req.body;
-  console.log("email: ", email);
+  console.log("req body ", req.body);
   // validation  - not empty
   if (
     [fullName, email, username, password].some((field) => field?.trim() === "")
@@ -15,16 +15,25 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
   //  check if user already exists : username,email
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 
   if (existedUser) {
     throw new ApiError(409, "User with email or username already exists");
   }
+  console.log(req.files);
   //  check for images , check for avator
   const avatorLocalPath = req.files?.avator[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  let converImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    converImageLocalPath = req.files.coverImage[0].path;
+  }
   if (!avatorLocalPath) {
     throw new ApiError(400, "Avator file is required");
   }
@@ -32,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //  upload them to cloudinary , avator
   const avator = await uploadOnCloudinary(avatorLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-  if (!avator || !coverImage) {
+  if (!avator) {
     throw new ApiError(400, "Avator and coverImage file is required");
   }
   // create user object - create entry in db
@@ -51,7 +60,10 @@ const registerUser = asyncHandler(async (req, res) => {
   //  check for user creation
   if (!createdUser) {
     throw new ApiError(500, "Something went wrong while registering the user ");
+  } else {
+    console.log(`user id created:${createdUser}`);
   }
+
   // return response
   return res
     .status(201)
