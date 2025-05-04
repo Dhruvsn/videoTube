@@ -23,16 +23,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
   console.log(req.files);
+
   //  check for images , check for avator
   const avatorLocalPath = req.files?.avator[0]?.path;
   // const coverImageLocalPath = req.files?.coverImage[0]?.path;
-  let converImageLocalPath;
+  let coverImageLocalPath;
   if (
     req.files &&
     Array.isArray(req.files.coverImage) &&
     req.files.coverImage.length > 0
   ) {
-    converImageLocalPath = req.files.coverImage[0].path;
+    coverImageLocalPath = req.files.coverImage[0].path;
   }
   if (!avatorLocalPath) {
     throw new ApiError(400, "Avator file is required");
