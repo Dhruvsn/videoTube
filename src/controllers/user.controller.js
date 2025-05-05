@@ -94,10 +94,10 @@ const registerUser = asyncHandler(async (req, res) => {
  */
 const loginUser = asyncHandler(async (req, res) => {
   // Extract login credentials from request body
-  const { email, username, password } = req.body;
+  const { email, username, password   } = req.body;
 
   // // Validate that either username or email is provided
-  if (!username || !email) {
+  if (!username && !email) {
     throw new ApiError(400, "Username or email is required");
   }
   // Find user by username or email in database
