@@ -63,7 +63,10 @@ const registerUser = asyncHandler(async (req, res) => {
   const avator = await uploadOnCloudinary(avatorLocalPath);
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
   if (!avator) {
-    throw new ApiError(400, "Avator and coverImage file is required");
+    throw new ApiError(400, "Avator file is required");
+  }
+  if (!coverImage) {
+    throw new ApiError(400, "cover file is required");
   }
   // create user object - create entry in db
   const user = await User.create({
